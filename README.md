@@ -71,3 +71,11 @@ Vertex 0 positions: Initial(X=0.0, Y=0.0, Z=0.0) -> Transformed(X= 0.00, Y= 0.00
 Vertex 1 positions: Initial(X=1.0, Y=0.0, Z=0.0) -> Transformed(X= 0.00, Y= 0.00, Z=-1.00)
 Vertex 2 positions: Initial(X=1.0, Y=1.0, Z=0.0) -> Transformed(X= 0.00, Y= 1.00, Z=-1.00)
 ```
+
+## 📦 Instant Executable Launch
+
+Skip compilation and run the pre-packaged executable binary file instantly:
+
+```bash
+java -jar LinearAlgebraEngine.jar
+```
