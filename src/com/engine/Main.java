@@ -1,35 +1,25 @@
 package com.engine;
 
-import com.engine.matrix.Matrix;
-import com.engine.vector.Vector3;
-import com.engine.solver.LinearSystemSolver;
+import com.engine.simulation.SimulationEngine;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("--- Day 5 Verification ---");
+        System.out.println("==================================================");
+        System.out.println("     3D COORDINATE SPACE SIMULATION INITIATED    ");
+        System.out.println("==================================================");
 
-        // System to solve:
-        //  2x -  y + 0z =  2
-        // -1x + 2y -  z = -1
-        //  0x -  y + 2z =  4
+        SimulationEngine engine = new SimulationEngine();
 
-        double[][] coefficients = {
-            { 2.0, -1.0,  0.0},
-            {-1.0,  2.0, -1.0},
-            { 0.0, -1.0,  2.0}
-        };
-        Matrix A = new Matrix(coefficients);
-        Vector3 B = new Vector3(2.0, -1.0, 4.0);
-
-        System.out.println("Coefficient Matrix A:");
-        A.print();
-        System.out.printf("\nConstants Vector B: [ %.2f, %.2f, %.2f ]\n", B.x, B.y, B.z);
-
-        // Solve the system Ax = B
-        Vector3 solution = LinearSystemSolver.solveSystem3x3(A, B);
-
-        System.out.println("\nSystem Solved Successfully!");
-        System.out.printf("Solution Vector x: [ X=%.2f, Y=%.2f, Z=%.2f ] (Expected: X=2.00, Y= 2.00, Z=3.00)\n", 
-            solution.x, solution.y, solution.z);
+        // Simulate a timeline stepping by 45 degrees each frame
+        for (double degrees = 0.0; degrees <= 135.0; degrees += 45.0) {
+            engine.runSimulationStep(degrees);
+            try {
+                Thread.sleep(300); // Small delay to mimic a dynamic frame cycle rate
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        
+        System.out.println("\nSimulation timeline complete.");
     }
 }

@@ -27,16 +27,21 @@ public class SimulationEngine {
         });
     }
 
+    // Runs a simulation frame, applying the linear transformation to all vectors
     public void runSimulationStep(double rotationDegrees) {
         Matrix transformation = createYRotationMatrix(rotationDegrees);
         System.out.println("\n--- SIMULATION STEP: Rotating Cube by " + rotationDegrees + "° ---");
         
         for (int i = 0; i < meshPoints.length; i++) {
+            // 1. Transform spatioal vector into a colum matrix
             Matrix vectorMat = meshPoints[i].toMatrix();
+            // 2. Apply matrix multiplication (Transformation Matrix * Coordinate Matrix)
             Matrix transformedMat = transformation.multiply(vectorMat);
+            // 3. Reconstruct the modified spatial coordinates.
             Vector3 finalPos = Vector3.fromMatrix(transformedMat);
             
-            System.out.printf("Vertex %d transformed: (%5.2f, %5.2f, %5.2f)\n", i, finalPos.x, finalPos.y, finalPos.z);
+            System.out.printf("Vertex %d transformed: Initial(X=%.1f, Y=%.1f, Z=%.1f) => Tranformed(X=%5.2f, Y=%5.2f, Z=%5.2f)\n",
+                i, meshPoints[i].x, meshPoints[i].y, meshPoints[i].z, finalPos.x, finalPos.y, finalPos.z);
         }
     }
 }
