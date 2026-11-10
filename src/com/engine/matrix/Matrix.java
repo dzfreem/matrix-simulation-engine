@@ -135,19 +135,75 @@ public class Matrix {
         return det;
     }
 
-    // DAY 4: Implement Inverse calculation
+    // DAY 4: Implement Inverse calculation via Gauss-Jordan Elimination
     public Matrix inverse() {
-        if (rows != cols) {
-            throw new IllegalStateException("Matrix must be square to invert.");
+        if (this.rows != this.cols) {
+            throw new IllegalStateException("Matrix must be square to compute its inverse.");
         }
+        
+        // 1. Safeguard against singular matrices (matrices with no inverse)
         double det = determinant();
-        if (Math.abs(det) < 1e-9) {
+        double EPSILON = 1e-9;
+        if (Math.abs(det) < EPSILON) {
             throw new ArithmeticException("Matrix is singular and cannot be inverted.");
         }
-        Matrix result = new Matrix(rows, cols);
-        // TODO: Calculate and return the inverse mrix
-        return result;
+                
+        int n = rows;
+        double[][] augmented = new double[n][2 * n];
+        for (int i = 0; i < n; i++) {
+            System.arraycopy(this.data[i], 0, augmented[i], 0, n);
+            augmented[i][n+i] = 1.0;
+        }
+
+        for (int i = 0; i < n; i++) {
+            if (Math.abs(augmented[i][i]) < EPSILON) {
+                int swapRow = -1;
+                for (int r = i + 1; r < n; r++) {
+                    if (Math.abs(augmented[r][i]) > EPSILON) {
+                        swapRow = r;
+                        break;
+                    }
+                }
+                
+                if (swapRow == -1) {
+                    throw new ArithmeticException("Matrix is singular. Cannot invert.");
+                }
+            
+        
+                // Three-way row swap using a declared temp array
+                double[] temp = augmented[i];
+                augmented[i] = augmented[swapRow];
+                augmented[swapRow] = temp;
+            }
+
+            // Scale pivot row so the diagonal element becomes exactly 1.0
+            double pivotPivot = augmented[i][i];
+            for (int c = i; c < 2 * n; c++) {
+                augmented[i][c] /= pivotPivot;
+            }
+
+            // Eliminate all other entries in column 'i' (both above and below the diagonal)
+            for (int r = 0; r < n; r++) {
+                if (r != i) {
+                    double factor = augmented[r][i];
+                    for (int c = i; c < 2 * n; c++) {
+                        augmented[r][c] -= factor * augmented[i][c];
+                    }
+                }
+            }
+        }
+
+        // 4. Extract the right half [A^-1] out of the augmented matrix structure
+        Matrix inverseMatrix = new Matrix(n, n);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                inverseMatrix.set(i, j, augmented[i][n + j]);
+            }
+        }
+
+        return inverseMatrix;
     }
+
 
     public void print() {
         for (int i = 0; i < rows; i++) {

@@ -4,21 +4,26 @@ import com.engine.matrix.Matrix;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("--- Day 3 Verification ---");
+        System.out.println("--- Day 4 Verification ---");
 
-        // Initialize a standard 3x3 matrix
         double[][] data = {
-            {2.0, -1.0,  0.0},
+            {2.0, -1.0, 0.0},
             {-1.0, 2.0, -1.0},
-            {0.0, -1.0,  2.0}
+            {0.0, -1.0, 2.0}
         };
-        Matrix matrix = new Matrix(data);
+        Matrix A = new Matrix(data);
 
-        System.out.println("Target Matrix:");
-        matrix.print();
+        System.out.println("Original Matrix A:");
+        A.print();
 
-        // Calculate determinant
-        double det = matrix.determinant();
-        System.out.printf("\nCalculated Determinant: %.2f (Expected: 4.00)\n", det);
+        // Compute Inverse
+        Matrix A_inverse = A.inverse();
+        System.out.println("\nComputed Inverse Matrix A^-1:");
+        A_inverse.print();
+
+        // Identity Verification check
+        System.out.println("\nVerification: A x A^-1 (Should equal Identity Matrix):");
+        Matrix identityVerification = A.multiply(A_inverse);
+        identityVerification.print();
     }
 }
