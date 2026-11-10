@@ -46,14 +46,35 @@ public class Matrix {
         }
         
         return result;
-    }       
-    // DAY 2: Implement dot-product matrix multiplication
-    public Matrix multiply(Matrix other) {
-        if (this.cols != other.rows) {
-            throw new MatrixDimensionMismatchException("Dimensions mismatch: " + this.cols + " cols != " + other.rows + " rows.");
+    }   
+
+        // DAY 2: Implement dot-product matrix multiplication
+        public Matrix multiply(Matrix other) {
+            // 1. Dimension Validation Check
+            if (this.cols != other.rows) {
+                throw new MatrixDimensionMismatchException(
+                    "Cannot multiply matrices: Inner dimensions must match. " + 
+                    "Matrix A columns (" + this.cols + ") must equal Matrix B rows (" + other.rows + ")."
+                );
         }
+
+        // 2. Initialize the resulting matrix structure (M x P)
         Matrix result = new Matrix(this.rows, other.cols);
-        // TODO: Compute matrix multiplication (Row x Column dot products)
+
+        // 3. The Triple-Loop Algorithmic Core
+        for (int i = 0; i < this.rows; i++) { // Iterates through rows of A
+            for (int j = 0; j < other.cols; j++) { // Iterates through columns of B
+                double dotProductSum = 0.0;
+                
+                for (int k = 0; k < this.cols; k++) { // Tracks the inner matching index
+                    dotProductSum += this.data[i][k] * other.data[k][j];
+                }
+                
+                // Assign the final computed sum to the target cell
+                result.set(i, j, dotProductSum);
+            }
+        }
+
         return result;
     }
 
@@ -62,8 +83,56 @@ public class Matrix {
         if (rows != cols) {
             throw new IllegalStateException("Determinant requires a square matrix.");
         }
-        // TODO: Return the determinant using row reduction O(n^3)
-        return 0.0;
+        
+        int n = this.rows;
+        // Clone the internal data array to preserve the original matrix values (Encapsulation)
+        double[][] mat = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            System.arraycopy(this.data[i], 0, mat[i], 0, n);
+        }
+
+        double det = 1.0;
+        double EPSILON = 1e-9;
+
+        // Loop through each column to eliminate values below the diagonal.
+        for (int i = 0; i < n; i++) {
+            // Find a non-zero pivot element if the current one is zero.
+            if (Math.abs(mat[i][i]) < EPSILON) {
+                int pivotRow = -1;
+                for (int r = i + 1; r < n; r++) {
+                    if (Math.abs(mat[r][i]) > EPSILON) {
+                        if (Math.abs(mat[r][i]) > EPSILON) {
+                            pivotRow = r;
+                            break;
+                        }
+                    }
+                }
+
+                // If no non-zero element is found below, the matrix is singular (det = 0)
+                if (pivotRow == -1) {
+                    return 0.0;
+                }
+
+                // Swap rows
+                double[] temp = mat[i];
+                mat[i] = mat[pivotRow];
+                mat[pivotRow] = temp;
+
+                // Rule 1: Swapping rows flips the sign of the determinant
+                det *= -1.0;
+            }
+
+            for (int r = i + 1; r < n; r++) {
+                double factor = mat[r][i] / mat[i][i];
+                for (int c = i; c < n; c++) {
+                    mat[r][c] -= factor * mat[i][c];
+                }
+            }
+
+            // Rule 2: Multiply the current diagonal element into our running project.
+            det *= mat[i][i];
+        }
+        return det;
     }
 
     // DAY 4: Implement Inverse calculation
